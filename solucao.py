@@ -19,11 +19,11 @@ class PrioritizedItem:
     item: Any=field(compare=False)
 
 class Nodo():
-    def __init__(self, estado, acao, custo, pai = None):
+    def __init__(self, estado, pai, acao, custo):
         self.estado = estado
+        self.pai = pai
         self.acao = acao
         self.custo = custo
-        self.pai = pai
     
     def __str__(self):
         return f"Estado: {self.estado} | Ação: {self.acao} | Custo: {self.custo}"
@@ -139,6 +139,7 @@ def print_board(board):
 def print_caminho(caminho):
     for acao in caminho:
         print(str(acao) + ', ', end="")
+
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 # Descrição : Dado um estado do tabuleiro retorna todos os possíveis estados 
 #             alcançáveis a partir dele 
@@ -153,16 +154,16 @@ def sucessor(estado):
         aux_board = board.copy()
         if (move == "esquerda") and (pos not in (0,3,6)):
             aux_board[pos - 1], aux_board[pos] = aux_board[pos], aux_board[pos - 1]
-            successors.append((move, board_to_state(aux_board)))
+            successors.append((move, (board_to_state(aux_board))))
         if (move == "direita") and (pos not in (2,5,8)):
             aux_board[pos + 1], aux_board[pos] = aux_board[pos], aux_board[pos + 1]
-            successors.append((move, board_to_state(aux_board)))
+            successors.append((move, (board_to_state(aux_board))))
         if (move == "acima") and (pos > 2):
             aux_board[pos - 3], aux_board[pos] = aux_board[pos], aux_board[pos - 3]
-            successors.append((move, board_to_state(aux_board)))
+            successors.append((move, (board_to_state(aux_board))))
         if (move == "abaixo") and (pos < 6):
             aux_board[pos + 3], aux_board[pos] = aux_board[pos], aux_board[pos + 3]
-            successors.append((move, board_to_state(aux_board)))
+            successors.append((move, (board_to_state(aux_board))))
 
     return successors
 
@@ -173,7 +174,7 @@ def expande(node):
     successors = sucessor(node.estado)
     return_nodes = []
     for succ in successors:
-        new_node = Nodo(succ[1], succ[0], node.custo + 1, node)
+        new_node = Nodo(succ[1], node, succ[0], node.custo + 1)
         return_nodes.append(new_node)
     return return_nodes
 
@@ -187,10 +188,22 @@ def caminho(node):
     caminho = [node.acao]
     while node.pai is not None:
         node = node.pai
-        caminho.append(node.acao)
+        if node.acao != None:
+            caminho.append(node.acao)
 
     caminho.reverse()   
     return caminho
+
+#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+# Descrição : Determina se o estado é resolvível
+#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+def isSolvable(arr) :
+    inv_count = 0
+    for i in range(9) :
+        for j in range(i + 1, 9) :
+            if (arr[j] != '_' and arr[i] < arr[j]) :
+                inv_count += 1
+    return inv_count % 2 == 0
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 # Descrição : Algoritmo genérico de busca em grafo
@@ -200,14 +213,18 @@ def busca_grafo(estado, frontier_data_structure, explored_data_structure):
     explored = explored_data_structure()
     nodes_explored = 0
     frontier = frontier_data_structure()
-    frontier.put(Nodo(estado, None, 0))
+    frontier.put(Nodo(estado, None, None, 0))
+
+    if not isSolvable(state_to_board(estado)):
+        return None
+
     while True:
         if frontier.empty():
-            return -1
+            return None
         node = frontier.get()
         #print(node.estado)
         if node.estado == "12345678_":
-            print(f'Nodos explorados: {nodes_explored}, tempo: {time.time() - t_start}')
+            #print(f'Nodos explorados: {nodes_explored}, tempo: {time.time() - t_start}')
             return caminho(node)
         if node.estado not in explored:
             explored.append(node.estado)
@@ -247,9 +264,9 @@ def execute_all_algs():
             (astar_hamming, "A*H")]
     states = ['4365_1278', '1234567_8', '12345678_']
     for state in states:
-        print(f"========== '{state}' ==========")
+        #print(f"========== '{state}' ==========")
         for alg in algs:
-            print(f'{alg[1]}: ', end="")
+            #print(f'{alg[1]}: ', end="")
             alg[0](state)
 
 execute_all_algs()
