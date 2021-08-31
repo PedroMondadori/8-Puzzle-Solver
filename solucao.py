@@ -1,10 +1,3 @@
-# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-# Descrição : Script que implementa diversos algoritmos de busca em grafos
-# Autor     : Pedro Lago Mondadori, Bruno Corrêa
-# Data      : 17/08/2021
-# \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-
 import queue
 import time
 from dataclasses import dataclass, field
@@ -285,18 +278,11 @@ def execute_all_algs():
             (dfs, "DFS"),
             (astar_manhattan, "A*M"),
             (astar_hamming, "A*H")]
-    states = ['4365_1278', '1234567_8', '12345678_']
+    states = ['2_3541687']
     for state in states:
-        #print(f"========== '{state}' ==========")
+        print(f"========== '{state}' ==========")
         for alg in algs:
             print(f'{alg[1]}: ', end="")
-            alg[0](state)
-    import time
-    start_time = time.time()
-    # astar_hamming('8_6547231')
-    print("--- %s seconds ---" % (time.time() - start_time))
-
+            print(len(alg[0](state)))
 
 execute_all_algs()
-
-#print(expande(Nodo("2_3541687", None, None, 0)))
