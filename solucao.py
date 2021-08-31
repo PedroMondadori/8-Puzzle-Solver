@@ -262,7 +262,7 @@ def dfs(estado):
 
 
 def astar_hamming(estado):
-    return busca_grafo(estado, HammingPriorityQueue, list)
+    return busca_grafo(estado, HammingPriorityQueue, explored_set)
 
 # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 # Descrição : busca A* utilizando a heurística de distância Manhattan
@@ -270,7 +270,7 @@ def astar_hamming(estado):
 
 
 def astar_manhattan(estado):
-    return busca_grafo(estado, ManhattanPriorityQueue, list)
+    return busca_grafo(estado, ManhattanPriorityQueue, explored_set)
 
 
 def execute_all_algs():
